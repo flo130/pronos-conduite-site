@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:og="http://ogp.me/ns#">
+    <head>
+        <title>Monitoring du serveur</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    </head>
+    <body style="padding-bottom: 70px;">
+        <div class="container">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Outils :</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/munin">Munin</a></li>
+                            <li><a href="/server-status">Apache</a></li>
+                            <li><a href="/apc/apc.php">APC</a></li>
+                            <li><a href="/webcam">Webcam</a></li>
+                            <li><a href="/imprimante">Imprimante</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc/maj.html">Mise à jour</a></li>
+                                    <li><a href="/doc/user.html">Utilisateur</a></li>
+                                    <li><a href="/doc/domaine-name.html">Nom de domaine</a></li>
+                                    <li><a href="/doc/ntp.html">Heure (NTP)</a></li>
+                                    <li><a href="/doc/ssh.html">SSH</a></li>
+                                    <li><a href="/doc/apache.html">Apache/MySql/PHP</a></li>
+                                    <li><a href="/doc/motion.html">Motion (webcam)</a></li>
+                                    <li><a href="/doc/cups.html">Cups (serveur d'impression)</a></li>
+                                    <li><a href="/doc/secu.html">Sécurité</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+           
+            <ol class="breadcrumb">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/doc/index-doc.html">Documentation</a></li>
+                <li class="active">Heure (NTP)</li>
+            </ol>
+            
+            <h1>Configuration du serveur temps</h1>
+            
+            <h2>Installation</h2>
+            
+            Installation : 
+            <pre>[pi@raspberrypi / ]$ sudo apt-get install ntp ntpdate</pre>
+            
+            <h2>Configuration</h2>
+            
+            <ul>
+                <li>
+                    Régler le fuseau horaire avec la commande : 
+                    <pre>[pi@raspberrypi / ]$ sudo tzselect</pre>
+                </li>
+                <li>
+                    Ouvrir le fichier "<em>/etc/ntp.conf</em>" et ajouter ou remplacer les lignes existantes par les suivantes :
+                    <pre>server 0.fr.pool.ntp.org
+server 1.fr.pool.ntp.org
+server 2.fr.pool.ntp.org</pre>
+                </li>
+                <li>
+                    Mise à jour de l'heure avec : 
+                    <pre>[pi@raspberrypi / ]$ sudo ntpdate pool.ntp.org</pre>
+                </li>
+                <li>
+                    Démarrer le démon : 
+                    <pre>[pi@raspberrypi / ]$ sudo /etc/init.d/ntp start</pre>
+                </li>
+                <li>
+                    Synchronisation de l'heure : 
+                    <pre>[pi@raspberrypi / ]$ sudo dpkg-reconfigure ntpdate</pre>
+                </li>
+                <li>
+                    On programme la resynchronisation automatique à midi tous les jours : <em>crontab -e</em> : 
+                    <pre>00 12 * * 1-7 dpkg-reconfigure ntpdate </pre>
+                </li>
+            </ul>
+            
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container"></div>
+            </nav>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

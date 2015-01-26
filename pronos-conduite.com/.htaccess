@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+	RewriteCond %{REQUEST_URI} !^(/index\.php|/assets/images|/assets/javascript|/assets/css|/assets/font|/robots\.txt|/favicon\.ico|/urllist\.txt|/sitemap\.xml)
+	RewriteRule ^(.*)$ /index.php/$1 [L]
+</IfModule> 
+
+
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType application/x-javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType image/* "access plus 1 month"
+</IfModule>

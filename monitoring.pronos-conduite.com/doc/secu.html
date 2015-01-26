@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:og="http://ogp.me/ns#">
+    <head>
+        <title>Monitoring du serveur</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    </head>
+    <body style="padding-bottom: 70px;">
+        <div class="container">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Outils :</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/munin">Munin</a></li>
+                            <li><a href="/server-status">Apache</a></li>
+                            <li><a href="/apc/apc.php">APC</a></li>
+                            <li><a href="/webcam">Webcam</a></li>
+                            <li><a href="/imprimante">Imprimante</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc/maj.html">Mise à jour</a></li>
+                                    <li><a href="/doc/user.html">Utilisateur</a></li>
+                                    <li><a href="/doc/domaine-name.html">Nom de domaine</a></li>
+                                    <li><a href="/doc/ntp.html">Heure (NTP)</a></li>
+                                    <li><a href="/doc/ssh.html">SSH</a></li>
+                                    <li><a href="/doc/apache.html">Apache/MySql/PHP</a></li>
+                                    <li><a href="/doc/motion.html">Motion (webcam)</a></li>
+                                    <li><a href="/doc/cups.html">Cups (serveur d'impression)</a></li>
+                                    <li><a href="/doc/secu.html">Sécurité</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+           
+            <ol class="breadcrumb">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/doc/index-doc.html">Documentation</a></li>
+                <li class="active">Sécurité</li>
+            </ol>
+            
+            <h1>Sécurité</h1>
+            
+            <h2>Fail2ban</h2>
+            
+            <h3>Installation de "<em>Fail2ban</em>"</h3>
+            
+            Installation :
+            <pre>[pi@raspberrypi / ]$ sudo apt-get install fail2ban</pre>
+            
+            <h3>Configuration de "<em>Fail2ban</em>"</h3>
+            Editer le fichier <em>/etc/fail2ban/jail.conf</em> : 
+            <ul>
+                <li>
+                    Mail d'avertissement :
+                    <pre>destemail = leborgne.florent@gmail.com</pre>
+                </li>
+                <li>
+                    Valeur par défaut pour les jail qui ne surchargent pas ces valeurs :
+                    <pre>[DEFAULT]
+# "ignoreip" can be an IP address, a CIDR mask or a DNS host
+ignoreip = 127.0.0.1/8
+findtime = 3600
+bantime = 86400
+maxretry = 3</pre>
+                </li>
+                <li>
+                    Jail pour le port ssh :
+                    <pre>[ssh]
+enabled = true
+port    = ssh
+filter  = sshd
+logpath  = /var/log/auth.log
+maxretry = 6</pre>
+            </li>
+            <li>
+                Jail xinetd-fail :
+                <pre>[xinetd-fail]
+enabled   = true 
+filter    = xinetd-fail
+port      = all
+banaction = iptables-multiport-log
+logpath   = /var/log/daemon.log
+maxretry  = 2</pre>
+            </li>
+            <li>
+                Jail pam-generic :
+                <pre>[pam-generic]
+enabled = true
+filter  = pam-generic
+port = all
+banaction = iptables-allports
+port     = anyport
+logpath  = /var/log/auth.log
+maxretry = 6</pre>
+            </li>
+            <li>
+                Jail ssh-ddos :
+                <pre>[ssh-ddos]
+enabled = true
+port    = ssh
+filter  = sshd-ddos
+logpath  = /var/log/auth.log
+maxretry = 6</pre>
+            </li>
+            <li>
+                Jail apache :
+                <pre>[apache]
+enabled = true
+port    = http,https
+filter  = apache-auth
+logpath = /var/log/apache*/*error.log
+maxretry = 6</pre>
+            </li>
+            <li>
+                Jail apache-multiport :
+                <pre>[apache-multiport]
+enabled   = true
+port      = http,https
+filter    = apache-auth
+logpath   = /var/log/apache*/*error.log
+maxretry  = 6</pre>
+            </li>
+            <li>
+                Jail apache-noscript :
+                <pre>[apache-noscript]
+enabled = true 
+port    = http,https
+filter  = apache-noscript
+logpath = /var/log/apache*/*error.log
+maxretry = 6</pre>
+            </li>
+            <li>
+                Jail apache-overflows :
+                <pre>[apache-overflows]
+enabled = true 
+port    = http,https
+filter  = apache-overflows
+logpath = /var/log/apache*/*error.log
+maxretry = 2</pre>
+            </li>
+        </ul>
+        
+        Redémarage du service :
+        <pre>[pi@raspberrypi / ]$ sudo service fail2ban restart</pre>
+
+        Redémarage du client :
+        <pre>[pi@raspberrypi / ]$ sudo fail2ban-client restart</pre>
+
+        Vérification des log : 
+        <pre>[pi@raspberrypi / ]$ sudo tail -f /var/log/fail2ban.log</pre>
+
+            
+        <h2>Rkhunter</h2>
+        
+        <h3>Installation de "<em>Rkhunter</em>"</h3>
+        
+        Installation :
+        <pre>[pi@raspberrypi / ]$ sudo apt-get install rkhunter</pre>
+          
+        <h3>Configuration de "<em>Rkhunter</em>"</h3>
+        <ul>
+            <li>
+                Ouvrir le fichier "<em>/etc/default/rkhunter</em>" et y ajouter les lignes suivantes : 
+                <pre>REPORT_EMAIL="leborgne.florent@gmail.com" 
+CRON_DAILY_RUN="yes"</pre>
+            </li>
+            <li>
+                Mise a jour du logiciel : 
+                <pre>[pi@raspberrypi / ]$ sudo rkhunter --versioncheck</pre>
+            </li>
+            <li>
+                Lister les tests effectués : 
+                <pre>[pi@raspberrypi / ]$ sudo rkhunter --list</pre>
+            </li>
+            <li>
+                Faire une vérification : 
+                <pre>[pi@raspberrypi / ]$ sudo rkhunter --checkall</pre>
+            </li>
+        </ul>
+        
+        <h2>Outil de test</h2>
+        NMAP : 
+            <pre>[pi@raspberrypi / ]$ sudo apt-get install nmap
+[pi@raspberrypi / ]$ sudo nmap -v ip_ou_nom_de_la_machine</pre>
+        
+        <h2>Munin</h2>
+        
+        <h3>Installation de "<em>Munin</em>"</h3>
+        <ul>
+            <li>
+                Installation : 
+                <pre>[pi@raspberrypi / ]$sudo apt-get install munin munin-node munin-plugins-extra</pre>
+            </li>
+            <li>
+                Changer l'emplacement de la racine du serveur web de Munin :
+                <pre>[pi@raspberrypi / ]$ sudo ln -s /var/cache/munin/www /home/flo/monitoring.pronos-conduite.com/munin</pre>
+            </li>
+            <li>
+                Pour autoriser l'accès au serveur web, ouvrir le fichier "<em>/etc/munin/apache.conf</em>" : 
+                <pre>Allow from all</pre>
+                Redemarrage d'Apache :
+                <pre>[pi@raspberrypi / ]$ sudo service apache2 restart</pre>
+            </li>
+        </ul>
+
+        <h3>Configuration de <em>Munin</em></h3>
+        <ul>
+            <li>
+                Ouvrir le fichier de config : "<em>/etc/munin/munin.conf</em>" et déclarer "<em>127.0.0.1</em>" (s'il n'existe pas déjà) :
+                <pre>[localhost.localdomain]
+address 127.0.0.1
+use_node_name yes</pre>
+            </li>
+            <li>
+                Créer un fichier "<em>.htaccess</em>" :
+                <pre>[pi@raspberrypi / ]$ touch /home/flo/monitoring.pronos-conduite.com/.htaccess</pre>
+                Y placer le code suivant : 
+                <pre>AuthName "Authentification"
+AuthType Basic
+AuthUserFile "/home/flo/monitoring.pronos-conduite.com/.htpasswd"
+Require valid-user</pre>
+            </li>
+            <li>
+                Créer le fichier "<em>.htpasswd</em>" :
+                <pre>[pi@raspberrypi / ]$ touch /home/flo/monitoring.pronos-conduite.com/.htpasswd</pre>
+                Y placer le code suivant (pour admin / admin) :
+                <pre>admin:4kbVXr4sKYo7w</pre>
+            </li>
+            <li>
+                Activer les modules Apache de <em>Munin</em> : 
+                <pre><em>Installer Perl pour Apache :</em>
+[pi@raspberrypi / ]$ sudo apt-get install libwww-perl
+
+<em>Activer les modules apaches suivants :</em>
+[pi@raspberrypi / ]$ sudo a2enmod status
+[pi@raspberrypi / ]$ sudo a2enmod info
+
+<em>Configurer une URL pour voir les stats d'Apache :</em>
+[pi@raspberrypi / ]$ sudo vi /etc/apache2/conf.d/status
+
+ExtendedStatus On
+&lt;Location /server-status&gt;
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+    Allow from all
+&lt;/Location&gt;
+
+<em>Activer les modules Munin :</em>
+[pi@raspberrypi / ]$ sudo ln -s /usr/share/munin/plugins/apache_accesses /etc/munin/plugins/apache_accesses 
+[pi@raspberrypi / ]$ sudo ln -s /usr/share/munin/plugins/apache_volume /etc/munin/plugins/apache_volume
+[pi@raspberrypi / ]$ sudo ln -s /usr/share/munin/plugins/apache_processes /etc/munin/plugins/apache_processes
+
+<em>Tester les modules Munin :</em>
+[pi@raspberrypi / ]$ sudo munin-run apache_accesses autoconf
+[pi@raspberrypi / ]$ sudo munin-run apache_processes autoconf
+[pi@raspberrypi / ]$ sudo munin-run apache_volume autoconf
+
+<em>Redémarage de Munin :</em>
+[pi@raspberrypi / ]$ sudo /etc/init.d/munin-node restart</pre>
+            </li>
+            <li>
+                Voir les modules actifs et les modules suggérés : 
+                <pre>[pi@raspberrypi / ]$ sudo munin-node-configure
+[pi@raspberrypi / ]$ sudo munin-node-configure --suggest</pre>
+            </li>
+        </ul>
+        
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container"></div>
+            </nav>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

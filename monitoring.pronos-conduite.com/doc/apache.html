@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:og="http://ogp.me/ns#">
+    <head>
+        <title>Monitoring du serveur</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    </head>
+    <body style="padding-bottom: 70px;">
+        <div class="container">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Outils :</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/munin">Munin</a></li>
+                            <li><a href="/server-status">Apache</a></li>
+                            <li><a href="/apc/apc.php">APC</a></li>
+                            <li><a href="/webcam">Webcam</a></li>
+                            <li><a href="/imprimante">Imprimante</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc/maj.html">Mise à jour</a></li>
+                                    <li><a href="/doc/user.html">Utilisateur</a></li>
+                                    <li><a href="/doc/domaine-name.html">Nom de domaine</a></li>
+                                    <li><a href="/doc/ntp.html">Heure (NTP)</a></li>
+                                    <li><a href="/doc/ssh.html">SSH</a></li>
+                                    <li><a href="/doc/apache.html">Apache/MySql/PHP</a></li>
+                                    <li><a href="/doc/motion.html">Motion (webcam)</a></li>
+                                    <li><a href="/doc/cups.html">Cups (serveur d'impression)</a></li>
+                                    <li><a href="/doc/secu.html">Sécurité</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+           
+            <ol class="breadcrumb">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/doc/index-doc.html">Documentation</a></li>
+                <li class="active">Apache (vhosts)</li>
+            </ol> 
+            
+            <h1>Configuration Apache / PHP / MySql</h1>
+            
+            <h2>Installation d'"<em>Apache2</em>", de "<em>MySql</em>" et de "<em>PHP</em>"</h2>
+            <ul>
+                <li>
+                    Installation d'"<em>Apache2</em>" :
+                    <pre>[pi@raspberrypi / ]$ sudo apt-get install apache2</pre>
+                </li>
+                <li>
+                    Installation de "<em>MySql</em>" et du client "<em>MySql</em>" :
+                    <pre>[pi@raspberrypi / ]$ sudo apt-get install mysql-server mysql-client</pre>
+                </li>
+                <li>
+                    Installation de "<em>PHP</em>" et des modules d'accès à différents composants ainsi qu'"<em>APC</em>" (pour le cache) :
+                    <pre>[pi@raspberrypi / ]$ sudo apt-get install php5 php5-common libapache2-mod-php5 php5-cli php5-mysql php5-curl php-apc</pre>
+                </li>
+            </ul>
+           
+            <h2>Configuration d'"<em>Apache2</em>"</h2>
+            
+            <ul>
+                <li>
+                    Activer le module "<em>rewrite</em>" (pour la réécriture d'URL) :
+                    <pre>[pi@raspberrypi / ]$ sudo a2enmod rewrite</pre>
+                </li>
+                <li>
+                    Activer les modules "<em>proxy</em>" et "<em>proxy_http</em>" (utiles pour rediriger le flux de la webcam d'un port vers une URL, mais pas obligatoire...) : 
+                    <pre>[pi@raspberrypi / ]$ sudo a2enmod proxy
+[pi@raspberrypi / ]$ sudo a2enmod proxy_http</pre>
+                </li>
+                <li>
+                    Activer le module "<em>expires</em>" : 
+                    <pre>[pi@raspberrypi / ]$ sudo a2enmod expires</pre>
+                    Configuration (dans un des vhosts) : 
+                    <pre>&lt;IfModule mod_expires.c&gt;
+     # Turn on Expires and set default to now
+     ExpiresActive On
+     ExpiresDefault "now"
+
+     # Set up caching on media files for 1 month
+     &lt;FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|swf)$"&gt;
+     ExpiresDefault "access plus 1 month"
+     &lt;/FilesMatch&gt;
+
+     # Set up caching on images, CSS and JS files for 1 week
+     &lt;FilesMatch "\.(gif|jpg|jpeg|png|js|css)$"&gt;
+     ExpiresDefault "access plus 1 week"
+     &lt;/FilesMatch&gt;
+
+     # Set up 1 hour caching on commonly updated files
+     &lt;FilesMatch "\.(xml|xsl|html|htm|txt)$"&gt;
+     ExpiresDefault "access plus 1 hour"
+     &lt;/FilesMatch&gt;
+
+     # Force no caching for dynamic files
+     &lt;FilesMatch "\.(php|cgi|pl)$"&gt;
+     ExpiresActive Off
+     &lt;/FilesMatch&gt;
+&lt;/IfModule&gt;</pre>
+                </li>
+                <li>
+                    Activer le module "<em>headers</em>" :
+                    <pre>[pi@raspberrypi / ]$ sudo a2enmod headers</pre>
+                    Configuration (dans un vhost) : 
+                    <pre>&lt;ifModule mod_headers.c&gt;
+     &lt;FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|swf)$"&gt;
+        Header append Cache-Control "public"
+     &lt;/FilesMatch&gt;
+     &lt;FilesMatch "\.(gif|jpg|jpeg|png|js|css)$"&gt;
+        Header append Cache-Control "public"
+     &lt;/FilesMatch&gt;
+     &lt;FilesMatch "\.(xml|html|htm|txt)$"&gt;
+        Header append Cache-Control "public"
+     &lt;/FilesMatch&gt;
+     &lt;FilesMatch "\.(php|cgi|pl|htm)$"&gt;
+         Header set Cache-Control "private, no-cache, no-store, proxy-revalidate, no-transform"
+         Header set Pragma "no-cache"
+     &lt;/FilesMatch&gt;
+&lt;/ifModule&gt;</pre>
+                </li>
+                <li>
+                    Dans le fichier de config (de sécurité) d'"<em>Apache2</em>" ("<em>/etc/apache2/conf.d/security</em>"), ajouter ou modifier les lignes suivantes :
+                    <pre>ServerSignature Off
+ServerTokens Prod</pre>
+                </li>
+                <li>
+                    Ne pas oublier de redémarrer "<em>Apache2</em>" :
+                    <pre>[pi@raspberrypi / ]$ sudo /etc/init.d/apache2 restart</pre>
+                </li>
+            </ul>
+           
+           <h2>Configuration de "<em>MySql</em>"</h2>
+           <ul>
+                <li>
+                    Création de l'utilisateur "<em>prono_conduite</em>" : 
+                    <pre>CREATE USER 'prono_conduite'@'localhost' IDENTIFIED BY 'prono_conduite';</pre>
+                </li>
+                <li>    
+                    On donne les droits à l'utilisateur sur la base "<em>prono_conduite</em>" :
+                    <pre>GRANT ALL PRIVILEGES ON * . * TO 'prono_conduite'@'localhost';</pre>
+                </li>
+                <li>
+                    On flush les privilèges pour la prise en compte des deux actions précédentes:
+                    <pre>FLUSH PRIVILEGES;</pre>
+                </li>
+		   </ul>
+           
+           <h2>Configuration de "<em>PHP</em>"</h2>
+           <ul>
+                <li>
+                    Ouvrir le fichier "<em>/etc/php5/apache2/php.ini</em>" et ajouter : 
+                    <pre>extension=apc.so</pre>
+                </li>
+                <li>
+                    Puis activer le cache <br/>
+                    <pre>[APC] 
+apc.enabled=1</pre>
+                </li>
+                <li>
+                    Régler l'heure en ajoutant ou en modifiant : 
+                    <pre>date.timezone = Europe/Paris</pre>
+                </li>
+            </ul>
+            
+            <h2>Configuration des "<em>Virtual Hosts</em>"</h2>
+            
+            Dans "<em>/etc/apache2/sites-available</em>" il y a trois fichiers "<em>vhost</em>" (en plus de ceux présents par défaut) :
+            <ul>
+                <li>dev.pronos-conduite.com</li>
+                <li>monitoring.pronos-conduite.com</li>
+                <li>pronos-conduite.com</li>
+            </ul>
+            
+            Pour activer ou désactiver un site, utiliser les commandes suivantes (ceci va créer ou supprimer un lien symbolique entre le fichier réel et le répertoire "<em>/etc/apache2/sites-enabled</em>" qui sera lu par "<em>Apache2</em>") : 
+            <ul>
+                <li>Activer : <pre>[pi@raspberrypi / ]$ a2ensite dev.pronos-conduite.com</pre></li>
+                <li>Désactiver : <pre>[pi@raspberrypi / ]$ a2dissite dev.pronos-conduite.com</pre></li>
+            </ul>
+            
+            <h3>Contenu du "<em>vhost</em>" "<em>/etc/apache2/sites-available/dev.pronos-conduite.com</em>"</h3>
+            
+            <pre>&lt;VirtualHost *:80&gt;
+    ServerAdmin webmaster@localhost
+    ServerName dev.pronos-conduite.com
+    
+    RewriteEngine On
+    RewriteOptions inherit
+    
+    DocumentRoot /home/flo/dev.pronos-conduite.com
+    &lt;Directory /home/flo/dev.pronos-conduite.com&gt;
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    $lt;/Directory&gt;
+    
+    ErrorLog ${APACHE_LOG_DIR}/dev.pronos_conduite_error.log
+    # possible values : debug, info, notice, warn, error, crit, alert, emerg
+    LogLevel debug
+    CustomLog ${APACHE_LOG_DIR}/dev.pronos_conduite_access.log combined
+
+    # configuration du module expires
+    &lt;IfModule mod_expires.c&gt;
+        ExpiresActive on
+        ExpiresByType image/jpg "access plus 60 days"
+        ExpiresByType image/png "access plus 60 days"
+        ExpiresByType image/gif "access plus 60 days"
+        ExpiresByType image/jpeg "access plus 60 days"
+        ExpiresByType text/css "access plus 1 days"
+        ExpiresByType image/x-icon "access plus 1 month"
+        ExpiresByType text/javascript "access plus 1 week"
+        ExpiresByType application/x-javascript "access plus 1 week"
+        ExpiresByType application/javascript "access plus 1 week"
+    &lt;/IfModule&gt;
+    
+    # configuration du module headers
+    &lt;ifModule mod_headers.c&gt;
+            &lt;filesMatch "\\.(ico|pdf|flv|jpg|jpeg|png|gif|swf)$"&gt;
+                    Header set Cache-Control "max-age=2592000, public"
+            &lt;/filesMatch&gt;
+            &lt;filesMatch "\\.(css)$"&gt;
+                    Header set Cache-Control "max-age=604800, public"
+            &lt;/filesMatch&gt;
+            &lt;filesMatch "\\.(js)$"&gt;
+                    Header set Cache-Control "max-age=216000, private"
+            &lt;/filesMatch&gt;
+            &lt;filesMatch "\\.(xml|txt)$"&gt;
+                    Header set Cache-Control "max-age=216000, public, must-revalidate"
+            &lt;/filesMatch&gt;
+            &lt;filesMatch "\\.(html|htm|php)$"&gt;
+                    Header set Cache-Control "max-age=1, private, must-revalidate"
+            &lt;/filesMatch&gt;
+    &lt;/ifModule>
+&lt;/VirtualHost&gt;</pre>
+            
+            <h3>Contenu du "<em>vhost</em>" "<em>/etc/apache2/sites-available/monitoring.pronos-conduite.com</em>"</h3>
+            
+            <pre>&lt;VirtualHost *:80&gt;
+    ServerAdmin webmaster@localhost
+    ServerName monitoring.pronos-conduite.com
+    
+    RewriteEngine On
+    RewriteOptions inherit
+    
+    DocumentRoot /home/flo/monitoring.pronos-conduite.com
+    &lt;Directory /home/flo/monitoring.pronos-conduite.com&gt;
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    &lt;/Directory&gt;
+    
+    ErrorLog ${APACHE_LOG_DIR}/monitoring.pronos_conduite_error.log
+    # Possible values : debug, info, notice, warn, error, crit, alert, emerg
+    LogLevel debug
+    CustomLog ${APACHE_LOG_DIR}/monitoring.pronos_conduite_access.log combined
+    
+    ProxyPreserveHost On
+    ProxyRequests Off
+    
+    # config pour motion outil pour la webcam
+    ProxyPass /webcam http://localhost:8081/
+    ProxyPassReverse /webcam http://localhost:8081/
+    &lt;Proxy *&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+    
+    # config pour CUPS
+    ProxyPass /imprimante http://localhost:631/
+    ProxyPassReverse /imprimante http://localhost:631/
+    &lt;Proxy *&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+&lt;/VirtualHost&gt;</pre>
+
+            <h3>Contenu du "<em>vhost</em>" "<em>/etc/apache2/sites-available/pronos-conduite.com</em>"</h3>
+            
+            <pre>&lt;VirtualHost *:80&gt;
+        ServerAdmin webmaster@localhost
+        ServerName pronos-conduite.com
+        ServerAlias www.pronos-conduite.com
+        ServerAlias flo130.no-ip.info
+        
+        RewriteEngine On
+        RewriteOptions inherit
+        
+        DocumentRoot /home/flo/pronos-conduite.com
+        &lt;Directory /home/flo/pronos-conduite.com&gt;
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        &lt;/Directory&gt;
+        
+        ErrorLog ${APACHE_LOG_DIR}/pronos_conduite_error.log
+        # Possible values : debug, info, notice, warn, error, crit, alert, emerg
+        LogLevel debug
+        CustomLog ${APACHE_LOG_DIR}/pronos_conduite_access.log combined
+&lt;/VirtualHost&gt;</pre>
+
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container"></div>
+            </nav>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

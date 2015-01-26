@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:og="http://ogp.me/ns#">
+    <head>
+        <title>Monitoring du serveur</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    </head>
+    <body style="padding-bottom: 70px;">
+        <div class="container">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Outils :</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/munin">Munin</a></li>
+                            <li><a href="/server-status">Apache</a></li>
+                            <li><a href="/apc/apc.php">APC</a></li>
+                            <li><a href="/webcam">Webcam</a></li>
+                            <li><a href="/imprimante">Imprimante</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc/maj.html">Mise à jour</a></li>
+                                    <li><a href="/doc/user.html">Utilisateur</a></li>
+                                    <li><a href="/doc/domaine-name.html">Nom de domaine</a></li>
+                                    <li><a href="/doc/ntp.html">Heure (NTP)</a></li>
+                                    <li><a href="/doc/ssh.html">SSH</a></li>
+                                    <li><a href="/doc/apache.html">Apache/MySql/PHP</a></li>
+                                    <li><a href="/doc/motion.html">Motion (webcam)</a></li>
+                                    <li><a href="/doc/cups.html">Cups (serveur d'impression)</a></li>
+                                    <li><a href="/doc/secu.html">Sécurité</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+           
+            <ol class="breadcrumb">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/doc/index-doc.html">Documentation</a></li>
+                <li class="active">Cups (serveur d'impression)</li>
+            </ol>
+            
+            <h1>CUPS</h1>
+            
+            <h2>Installation de "<em>CUPS</em>"</h2>
+            
+            Installation :
+            <pre>[pi@raspberrypi ~ ]$ sudo apt-get install cups cups-client</pre>
+
+            <h2>Installation des pilotes d'impression pour une imprimante "<em>HP</em>"</h3>
+            
+            <ul>
+                <li>
+                    "<em>hplip</em>" est un package qui regroupe une quantité de pilotes pour les imprimantes "<em>HP</em>". <br/>
+                    Il est normalement installé en même temps que "<em>CUPS</em>" :
+                    <pre>[pi@raspberrypi ~ ]$ sudo apt-get install hplip</pre>
+                </li>
+                <li>
+                    Les fichiers "<em>PPD</em>" décrivent les caractéristiques par défaut d'une imprimante. <br/>
+                    Installation :
+                    <pre>[pi@raspberrypi ~ ]$ sudo apt-get install hpijs-ppds</pre> 
+                </li>
+                <li>
+                    Installation des fichiers faisant le lien entre le pilote de l'imprimante et le serveur "<em>CUPS</em>" :
+                    <pre>[pi@raspberrypi ~ ]$ sudo apt-get install hplip-cups</pre>
+                </li>
+                <li>
+                    Voir les imprimantes connectées : 
+                    <pre>[pi@raspberrypi ~ ]$ hp-probe</pre>
+                </li>
+                <li>
+                    Lancer l'aide pour l'installation : 
+                    <pre>[pi@raspberrypi ~ ]$ hp-setup -h</pre>
+                </li>
+                <li>
+                    Installation du pilote : allumer l'imprimante puis lancer : 
+                    <pre>[pi@raspberrypi ~ ]$ sudo hp-setup -i</pre>
+                    
+                </li>
+                <li>
+                    Suivre les indications du programme d'installation
+                </li>
+            </ul>
+            
+            <h2>Configurer "<em>CUPS</em>"</h2>
+            <ul>
+                <li>
+                    Ouvrir le fichier "<em>/etc/cupscupsd.conf puis modifier les valeurs ci-dessous.</em>".
+                </li>
+                <li>
+                    Autoriser l'écoute sur toutes les IP : 
+                    <pre>Listen *:631</pre>
+                </li>
+                <li>
+                    Autoriser toutes les URL : 
+                    <pre># Restrict access to the server...
+&lt;Location /&gt;
+  Order allow,deny
+  Allow from all
+&lt;/Location&gt;
+
+# Restrict access to the admin pages...
+&lt;Location /admin&gt;
+  Order allow,deny
+  Allow from all
+&lt;/Location&gt;
+
+# Restrict access to configuration files...
+&lt;Location /admin/conf&gt;
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+  Allow from all
+&lt;/Location&gt;
+</pre>
+			</li>
+			<li>
+				Autoriser l'administration via l'interface web :
+				<pre>WebInterface Yes</pre>
+			</li>
+		</ul>
+
+		<h2>Administration par le web</h2>
+        
+        L'URL d'accès à l'administration est la suivante : 
+		<pre>http://192.168.1.2:631</pre>
+
+		<h2>URL d'ajout d'un client "<em>CUPS</em>"</h2>
+        
+        Une fois le serveur "<em>CUPS</em>" en place, les clients peuvent se connecter aux imprimantes via les URLs suivantes : 
+		<pre>http://server-name-or-ip:631/printers/<nom_imrpimante>
+http://192.168.1.2:631/printers/hp_deskjet</pre>
+
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container"></div>
+            </nav>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

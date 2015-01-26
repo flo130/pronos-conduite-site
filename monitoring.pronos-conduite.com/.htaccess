@@ -1,0 +1,4 @@
+AuthName "Authentification"
+AuthType Basic
+AuthUserFile "/home/pi/monitoring.pronos-conduite.com/.htpasswd"
+Require valid-user

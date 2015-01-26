@@ -1,0 +1,39 @@
+th.header.headerSortDown { 
+    background-image: url(/assets/images/tab_headers/arrow_down.png); 
+}
+
+th.header.headerSortUp { 
+    background-image: url(/assets/images/tab_headers/arrow_up.png); 
+}
+
+th.header { 
+    background-image: url(/assets/images/tab_headers/arrow_double.png);     
+    cursor: pointer; 
+    background-repeat: no-repeat; 
+    background-position: center left; 
+} 
+
+.littlePaddingLeft {
+	padding-left: 8px;
+}
+
+h1, h2, h3 , h4 {
+	font-family: "Cabin",Arial,sans-serif;
+}
+
+blockquote p {
+	font-size: 14px;
+}
+
+.page-header h1 {
+	font-size: 38px;
+}
+
+.info-home {
+	min-height: 150px;
+}
+
+/* A retirer pour mettre un header fixed en haut */
+body {
+    padding-top: 0px;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:og="http://ogp.me/ns#">
+    <head>
+        <title>Monitoring du serveur</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    </head>
+    <body style="padding-bottom: 70px;">
+        <div class="container">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Outils :</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/munin">Munin</a></li>
+                            <li><a href="/server-status">Apache</a></li>
+                            <li><a href="/apc/apc.php">APC</a></li>
+                            <li><a href="/webcam">Webcam</a></li>
+                            <li><a href="/imprimante">Imprimante</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc/maj.html">Mise à jour</a></li>
+                                    <li><a href="/doc/user.html">Utilisateur</a></li>
+                                    <li><a href="/doc/domaine-name.html">Nom de domaine</a></li>
+                                    <li><a href="/doc/ntp.html">Heure (NTP)</a></li>
+                                    <li><a href="/doc/ssh.html">SSH</a></li>
+                                    <li><a href="/doc/apache.html">Apache/MySql/PHP</a></li>
+                                    <li><a href="/doc/motion.html">Motion (webcam)</a></li>
+                                    <li><a href="/doc/cups.html">Cups (serveur d'impression)</a></li>
+                                    <li><a href="/doc/secu.html">Sécurité</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+           
+            <ol class="breadcrumb">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/doc/index-doc.html">Documentation</a></li>
+                <li class="active">Mise à jour</li>
+            </ol>
+            
+            <h1>Mise à jour du serveur après installation</h1>
+            
+            <h2>Vérification de la version du noyau</h2>
+            <pre>[pi@raspberrypi / ]$ uname -a</pre>
+            
+            <h2>Mise à jour des packets</h2>
+            <pre>[pi@raspberrypi / ]$ sudo apt-get update</pre>
+            
+            <h2>Mise à jour des sources</h2>
+            <pre>[pi@raspberrypi / ]$ sudo apt-get upgrade</pre>
+            
+            <h2>Mise à jour de la distribution</h2>
+            <pre>[pi@raspberrypi / ]$ sudo apt-get dist-upgrade</pre>
+            
+            <h2>Mise à jour du firmware du "<em>Raspberrypi</em>"</h2>
+            <pre>[pi@raspberrypi / ]$ sudo rpi-update</pre>
+            
+            <h2>Re-vérification de la version du noyau</h2>
+            <pre>[pi@raspberrypi / ]$ uname -a
+Linux raspberrypi 3.12.26+ #702 PREEMPT Wed Aug 6 17:43:49 BST 2014 armv6l GNU/Linux</pre>
+                
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container"></div>
+            </nav>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

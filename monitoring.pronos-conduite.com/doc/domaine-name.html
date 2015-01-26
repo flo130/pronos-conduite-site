@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:og="http://ogp.me/ns#">
+    <head>
+        <title>Monitoring du serveur</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    </head>
+    <body style="padding-bottom: 70px;">
+        <div class="container">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Outils :</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/munin">Munin</a></li>
+                            <li><a href="/server-status">Apache</a></li>
+                            <li><a href="/apc/apc.php">APC</a></li>
+                            <li><a href="/webcam">Webcam</a></li>
+                            <li><a href="/imprimante">Imprimante</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc/maj.html">Mise à jour</a></li>
+                                    <li><a href="/doc/user.html">Utilisateur</a></li>
+                                    <li><a href="/doc/domaine-name.html">Nom de domaine</a></li>
+                                    <li><a href="/doc/ntp.html">Heure (NTP)</a></li>
+                                    <li><a href="/doc/ssh.html">SSH</a></li>
+                                    <li><a href="/doc/apache.html">Apache/MySql/PHP</a></li>
+                                    <li><a href="/doc/motion.html">Motion (webcam)</a></li>
+                                    <li><a href="/doc/cups.html">Cups (serveur d'impression)</a></li>
+                                    <li><a href="/doc/secu.html">Sécurité</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+           
+            <ol class="breadcrumb">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/doc/index-doc.html">Documentation</a></li>
+                <li class="active">Nom de domaine</li>
+            </ol>
+
+            <h1>Configuration du nom de domaine</h1>
+            
+            <h2>Mise en place du "<em>no-ip</em>"</h2>
+            
+            Une adresse "<em>no-ip</em>" existe : "<em>flo130.no-ip.info</em>". Elle est configurée directement sur la box internet (une "<em>bbox</em>") pour mettre à jour l'IP sur le service "<em>no-ip</em>". De cette manière l'IP de la box peut changer, elle sera toujours joignable sur "<em>flo130.no-ip.info</em>". 
+            <br/>
+            L'idée est de faire pointer un vrai nom de domaine sur cette adresse "<em>no-ip</em>", et pouvoir héberger le serveur (un raspberrypi) à la maison, derière la "<em>bbox</em>.
+            
+            <h2>Configuration coté "<em>One&One</em>"</h2>
+            
+            Coté "<em>One&One</em>", après avoir acheté le nom de domaine "<em>pronos-conduite.com</em>", il faut déclarer des sous-domaines que l'on a besoin et les faire pointer là où on le souhaite: 
+            <ul>
+                <li>www.pronos-conduite.com</li>
+                <li>admin.pronos-conduite.com</li>
+                <li>dev.pronos-conduite.com</li>
+                <li>monitoring.pronos-conduite.com</li>
+                <li>...</li>
+            </ul>
+
+            Exemple 1 : le sous-domaine pointe sur le serveur locale proposé par One&One :
+            <div class="media">
+                <a href="/doc/images/1.jpg"><img class="media-object" src="/doc/images/1.jpg" height="300"></a>
+                <a href="/doc/images/2.jpg"><img class="media-object" src="/doc/images/2.jpg" height="300"></a>
+                <a href="/doc/images/3.jpg"><img class="media-object" src="/doc/images/3.jpg" height="300"></a>
+                <a href="/doc/images/4.jpg"><img class="media-object" src="/doc/images/4.jpg" height="300"></a>
+            </div>
+            <br/>
+            Exemple 2 : le sous-domaine pointe sur le nom de domaine en "<em>no-ip</em>" ("<em>flo130.no-ip.info</em>") :
+            <div class="media">
+                <a href="/doc/images/1.jpg"><img class="media-object" src="/doc/images/11.jpg" height="300"></a>
+                <a href="/doc/images/2.jpg"><img class="media-object" src="/doc/images/22.jpg" height="300"></a>
+                <a href="/doc/images/3.jpg"><img class="media-object" src="/doc/images/33.jpg" height="300"></a>
+                <a href="/doc/images/4.jpg"><img class="media-object" src="/doc/images/44.jpg" height="300"></a>
+            </div>
+            
+            <h2>Configuration coté serveur</h2>
+            
+            Tous les noms de vhosts sont déclarés dans le fichier "<em>hosts</em>" pour pointer vers l'IP locale.<br/>
+            Voici le contenu du fichier "<em>/etc/hosts</em>" :
+            <pre>127.0.1.1       pronos-conduite.com www.pronos-conduite.com monitoring.pronos-conduite.com
+127.0.0.1       localhost
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+127.0.1.1       raspberrypi</pre> 
+   
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container"></div>
+            </nav>        
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </body>
+</html>
