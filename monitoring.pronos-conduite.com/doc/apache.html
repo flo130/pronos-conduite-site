@@ -77,7 +77,6 @@
             </ul>
            
             <h2>Configuration d'"<em>Apache2</em>"</h2>
-            
             <ul>
                 <li>
                     Activer le module "<em>rewrite</em>" (pour la réécriture d'URL) :
@@ -183,14 +182,12 @@ apc.enabled=1</pre>
             </ul>
             
             <h2>Configuration des "<em>Virtual Hosts</em>"</h2>
-            
             Dans "<em>/etc/apache2/sites-available</em>" il y a trois fichiers "<em>vhost</em>" (en plus de ceux présents par défaut) :
             <ul>
                 <li>dev.pronos-conduite.com</li>
                 <li>monitoring.pronos-conduite.com</li>
                 <li>pronos-conduite.com</li>
             </ul>
-            
             Pour activer ou désactiver un site, utiliser les commandes suivantes (ceci va créer ou supprimer un lien symbolique entre le fichier réel et le répertoire "<em>/etc/apache2/sites-enabled</em>" qui sera lu par "<em>Apache2</em>") : 
             <ul>
                 <li>Activer : <pre>[pi@raspberrypi / ]$ a2ensite dev.pronos-conduite.com</pre></li>
@@ -198,7 +195,6 @@ apc.enabled=1</pre>
             </ul>
             
             <h3>Contenu du "<em>vhost</em>" "<em>/etc/apache2/sites-available/dev.pronos-conduite.com</em>"</h3>
-            
             <pre>&lt;VirtualHost *:80&gt;
     ServerAdmin webmaster@localhost
     ServerName dev.pronos-conduite.com
@@ -254,7 +250,6 @@ apc.enabled=1</pre>
 &lt;/VirtualHost&gt;</pre>
             
             <h3>Contenu du "<em>vhost</em>" "<em>/etc/apache2/sites-available/monitoring.pronos-conduite.com</em>"</h3>
-            
             <pre>&lt;VirtualHost *:80&gt;
     ServerAdmin webmaster@localhost
     ServerName monitoring.pronos-conduite.com
@@ -296,7 +291,6 @@ apc.enabled=1</pre>
 &lt;/VirtualHost&gt;</pre>
 
             <h3>Contenu du "<em>vhost</em>" "<em>/etc/apache2/sites-available/pronos-conduite.com</em>"</h3>
-            
             <pre>&lt;VirtualHost *:80&gt;
         ServerAdmin webmaster@localhost
         ServerName pronos-conduite.com
@@ -320,17 +314,18 @@ apc.enabled=1</pre>
         CustomLog ${APACHE_LOG_DIR}/pronos_conduite_access.log combined
 &lt;/VirtualHost&gt;</pre>
 
-	    <h3>Tester la bonne syntaxe d'un fichier vhost Apache</h3>
-		<pre>[pi@raspberrypi / ]$ apache2 -t</pre>
+	<h3>Tester la bonne syntaxe d'un fichier vhost Apache</h3>
+	<pre>[pi@raspberrypi / ]$ apache2 -t</pre>
 		
-		<h3>Résolution des problèmes liés à Apache</h3>
-		Pour l'erreur :
-		<pre>
-		Config variable ${XXX} is not defined
-		</pre>
-		Exécuter les commandes suivantes :
-		<pre>[pi@raspberrypi / ]$ source /etc/apache2/envvars
-		[pi@raspberrypi / ]$ /usr/sbin/apache2 -V</pre>
+	<h3>Résolution des problèmes liés à Apache</h3>
+	Pour l'erreur :
+	<pre>Config variable ${XXX} is not defined</pre>
+	Exécuter les commandes suivantes :
+	<pre>[pi@raspberrypi / ]$ source /etc/apache2/envvars
+	[pi@raspberrypi / ]$ /usr/sbin/apache2 -V</pre>
+		
+	<h3>Commandes Symfony utiles</h3>
+	<pre>php bin/console doctrine:database:drop --force && php bin/console doctrine:database:create && php bin/console doctrine:migrations:diff && php bin/console doctrine:migrations:migrate --no-interaction</pre>
 		
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <div class="container"></div>
