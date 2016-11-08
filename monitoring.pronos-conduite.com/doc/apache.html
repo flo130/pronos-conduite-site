@@ -323,6 +323,15 @@ apc.enabled=1</pre>
 	    <h3>Tester la bonne syntaxe d'un fichier vhost Apache</h3>
 		<pre>[pi@raspberrypi / ]$ apache2 -t</pre>
 		
+		<h3>Résolution des problèmes liés à Apache</h3>
+		Pour l'erreur :
+		<pre>
+		Config variable ${XXX} is not defined
+		</pre>
+		Exécuter les commandes suivantes :
+		<pre>[pi@raspberrypi / ]$ source /etc/apache2/envvars
+		[pi@raspberrypi / ]$ /usr/sbin/apache2 -V</pre>
+		
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <div class="container"></div>
             </nav>
